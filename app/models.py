@@ -1,12 +1,11 @@
-from pydantic import BaseModel
-from typing import Optional
+from sqlalchemy import Table, Column, Integer, String, Boolean
+from app.database import metadata
 
-class Task(BaseModel):
-    id: int
-    title: str
-    completed: bool = False
-
-class TaskCreate(BaseModel):
-    title: str
-    completed: Optional[bool] = False
+tasks = Table(
+    "tasks",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("title", String, nullable=False),
+    Column("completed", Boolean, default=False),
+)
 

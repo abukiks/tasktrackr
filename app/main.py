@@ -1,48 +1,59 @@
 from fastapi import FastAPI, HTTPException
-from app.models import Task, TaskCreate
+from app.database import database, engine, metadata
+from app.models import tasks
+from app.schemas import Task, TaskCreate
 
 app = FastAPI()
 
-# In-memory DB
-tasks = []
-next_id = 1
+metadata.create_all(bind=engine)
+
+@app.on_event("startup")
+async def startup():
+    await database.connect()
+
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()
 
 @app.get("/")
 def root():
     return {"message": "Welcome to TaskTrackr 🚀"}
 
-@app.get("/tasks")
-def get_tasks():
-    return tasks
+@app.get("/tasks", response_model=list[Task])
+async def get_tasks():
+    query = tasks.select()
+    return await database.fetch_all(query)
 
-@app.get("/tasks/{task_id}")
-def get_task(task_id: int):
-    for task in tasks:
-        if task.id == task_id:
-            return task
-    raise HTTPException(status_code=404, detail="Task not found")
+@app.get("/tasks/{task_id}", response_model=Task)
+async def get_task(task_id: int):
+    query = tasks.select().where(tasks.c.id == task_id)
+    task = await database.fetch_one(query)
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return task
 
-@app.post("/tasks", status_code=201)
-def create_task(task: TaskCreate):
-    global next_id
-    new_task = Task(id=next_id, title=task.title, completed=task.completed)
-    tasks.append(new_task)
-    next_id += 1
-    return new_task
+@app.post("/tasks", response_model=Task, status_code=201)
+async def create_task(task: TaskCreate):
+    query = tasks.insert().values(title=task.title, completed=task.completed)
+    task_id = await database.execute(query)
+    return {**task.dict(), "id": task_id}
 
-@app.put("/tasks/{task_id}")
-def update_task(task_id: int, updated_task: TaskCreate):
-    for i, task in enumerate(tasks):
-        if task.id == task_id:
-            tasks[i] = Task(id=task_id, title=updated_task.title, completed=updated_task.completed)
-            return tasks[i]
-    raise HTTPException(status_code=404, detail="Task not found")
+@app.put("/tasks/{task_id}", response_model=Task)
+async def update_task(task_id: int, updated_task: TaskCreate):
+    query = tasks.update().where(tasks.c.id == task_id).values(
+        title=updated_task.title,
+        completed=updated_task.completed
+    )
+    result = await database.execute(query)
+    if result == 0:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return {**updated_task.dict(), "id": task_id}
 
 @app.delete("/tasks/{task_id}", status_code=204)
-def delete_task(task_id: int):
-    for i, task in enumerate(tasks):
-        if task.id == task_id:
-            tasks.pop(i)
-            return
-    raise HTTPException(status_code=404, detail="Task not found")
+async def delete_task(task_id: int):
+    query = tasks.delete().where(tasks.c.id == task_id)
+    result = await database.execute(query)
+    if result == 0:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return
 
