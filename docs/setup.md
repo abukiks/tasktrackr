@@ -820,3 +820,80 @@ tasktrackr/
 ```
 
 ✅ CI/CD is now active! Push to GitHub and see the Actions run automatically.
+
+---
+
+### ✅ 1️⃣1️⃣ Step 11: Container Registry – Push Docker Image
+
+#### 🧩 Goal: Store your app image in a container registry for deployment reuse
+
+We’ll use **Docker Hub** (simpler and common for beginners). If you prefer GHCR later, it's easy to switch.
+
+---
+
+### 🧱 1. Create a Docker Hub Account
+
+* Visit: [https://hub.docker.com](https://hub.docker.com)
+* Create an account (if not already)
+* Choose a username like `johnabucay` (used in image name)
+
+---
+
+### 🧱 2. Tag & Push Your Image
+
+#### 🔐 First, log in to Docker Hub
+
+```bash
+docker login
+```
+
+#### 🏷️ Then tag your image
+
+```bash
+docker tag tasktrackr abukiks/tasktrackr:v1.0.0
+```
+
+Replace `abukiks` with your Docker Hub username.
+
+#### 🚀 Push it
+
+```bash
+docker push abukiks/tasktrackr:latest
+```
+
+---
+
+### 🧪 Optional GitHub Actions Integration
+
+Update your GitHub Actions `ci.yml`:
+
+```yaml
+      - name: 🔐 Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: 🐳 Push to Docker Hub
+        run: |
+          docker tag tasktrackr ${{ secrets.DOCKER_USERNAME }}/tasktrackr:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/tasktrackr:latest
+```
+
+Then add secrets in your GitHub repo:
+
+* `DOCKER_USERNAME`: your Docker Hub username
+* `DOCKER_PASSWORD`: your Docker Hub password or [Docker Access Token](https://hub.docker.com/settings/security)
+
+---
+
+🔎 **Why This Matters?**
+This enables **reusable builds** for all environments — consistent deployment artifacts are a DevOps core value.
+
+---
+
+✅ Your image is now public and pullable:
+
+```bash
+docker pull abukiks/tasktrackr:v1.0.0
+```
