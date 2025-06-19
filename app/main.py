@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from app import models, database
 from app.config import settings
@@ -84,6 +85,7 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Task deleted"}
 
-@app.get("/healthz")
+@app.get("/healthz", include_in_schema=False)
+@app.head("/healthz", include_in_schema=False)
 def healthz():
-    return {"status": "ok"}
+    return JSONResponse(content={"status": "ok"})
