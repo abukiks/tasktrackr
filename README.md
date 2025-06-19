@@ -104,6 +104,7 @@ docker run -d -p 8000:8000 --env-file .env.dev tasktrackr
 ## 📮 Contact
 
 Built with ♥ by [John Carl Abucay](mailto:abukiks.x@gmail.com)
+
 [LinkedIn](https://www.linkedin.com/in/your-link) • [GitHub](https://github.com/YOUR_USERNAME)
 
 ---

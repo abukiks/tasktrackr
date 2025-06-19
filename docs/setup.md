@@ -982,4 +982,58 @@ This completes the **12-Factor App Deployment** phase — using a real cloud pla
 
 ✅ TaskTrackr is now **live in production**!
 
+---
 
+### ✅ 1️⃣3️⃣ Step 13: Monitoring & Healthchecks
+
+#### 🧩 Goal: Add a healthcheck endpoint and enable uptime monitoring — real SRE/DevOps practice.
+
+---
+
+### 🩺 1. Add `/health` Endpoint
+
+Update `main.py`:
+
+```python
+@app.get("/health")
+def healthcheck():
+    return {"status": "ok"}
+```
+
+✅ This lightweight endpoint will be used by platforms and uptime bots to confirm your app is alive.
+
+---
+
+### 🛡️ 2. Configure Healthcheck on Render
+
+1. Go to your **Render Web Service → Settings**
+2. Under **"Health Check Path"**, set:
+
+```
+/health
+```
+
+3. Render will now auto-restart your app if it fails this check.
+
+---
+
+### 🌐 3. Optional: Add Uptime Monitoring
+
+Use [UptimeRobot](https://uptimerobot.com/) (free) to get alerts if your app goes down.
+
+#### 🧪 Steps:
+
+1. Create a free account
+2. Add new monitor:
+
+   * **Type**: HTTP(s)
+   * **URL**: `https://tasktrackr.onrender.com/health`
+   * **Interval**: 5 minutes (default)
+3. Add email or Telegram for alerts
+
+---
+
+🔎 **Why This Matters?**
+
+* This supports **DevOps observability** and **SRE best practices**
+* Lets you catch issues early with proactive monitoring
