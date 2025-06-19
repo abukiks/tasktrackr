@@ -897,3 +897,89 @@ This enables **reusable builds** for all environments — consistent deployment 
 ```bash
 docker pull abukiks/tasktrackr:v1.0.0
 ```
+
+---
+
+### ✅ 1️⃣2️⃣ Step 12: Deploy to Production (Render)
+
+#### 🧩 Goal: Deploy your Dockerized FastAPI app to the cloud.
+
+---
+
+### 🛠️ 1. Prepare Render Environment
+
+#### 🧾 Sign up / Log in
+
+* Go to [https://render.com](https://render.com)
+* Sign in with GitHub
+
+---
+
+### 🛠️ 2. Push Code to GitHub
+
+If you haven’t already:
+
+```bash
+git init
+git add .
+git commit -m "Initial TaskTrackr version"
+git branch -M main
+git remote add origin https://github.com/yourusername/tasktrackr.git
+git push -u origin main
+```
+
+---
+
+### 🛠️ 3. Create New Web Service on Render
+
+* Click **"New Web Service"**
+* Choose **"Deploy from a Git repository"**
+* Connect your GitHub repo `tasktrackr`
+* **Environment**: `Docker`
+* **Name**: `tasktrackr`
+* **Branch**: `main`
+* **Build Command**: *(leave blank – uses Dockerfile)*
+* **Start Command**: *(leave blank – it's in `CMD` of Dockerfile)*
+
+---
+
+### ⚙️ 4. Add Environment Variables in Render
+
+Click **Environment → Add Environment Variable**:
+
+```env
+APP_NAME=TaskTrackr
+DEBUG=False
+DATABASE_URL=your_postgres_connection_url
+```
+
+🧠 You’ll get `DATABASE_URL` from Render’s **PostgreSQL Add-On**.
+
+---
+
+### 🧱 5. Add PostgreSQL Database (Optional but recommended)
+
+* Go to **Render Dashboard → Databases → Create a PostgreSQL DB**
+* Once created, copy its internal connection string (starts with `postgresql://`)
+* Paste it in the app’s `DATABASE_URL` environment variable
+
+---
+
+### 🚀 6. Deploy
+
+Once set up:
+
+* Render will build & deploy your app
+* View logs from the dashboard
+* Public URL will look like:
+  `https://tasktrackr.onrender.com`
+
+---
+
+🔎 **Why This Matters?**
+This completes the **12-Factor App Deployment** phase — using a real cloud platform to host your app and database.
+
+
+✅ TaskTrackr is now **live in production**!
+
+
