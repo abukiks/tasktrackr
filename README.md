@@ -7,9 +7,9 @@ Follows the [12-Factor App Methodology](https://12factor.net/) + DevOps best pra
 
 ## 🚀 Live Demo
 
-🌐 https://tasktrackr.onrender.com  
+🌐 https://tasktrackr-5grp.onrender.com
 🔎 Swagger Docs: `/docs`  
-✅ Healthcheck: `/health`
+✅ Healthcheck: `/healthz`
 
 ---
 
@@ -105,7 +105,7 @@ docker run -d -p 8000:8000 --env-file .env.dev tasktrackr
 
 Built with ♥ by [John Carl Abucay](mailto:abukiks.x@gmail.com)
 
-[LinkedIn](https://www.linkedin.com/in/your-link) • [GitHub](https://github.com/YOUR_USERNAME)
+[LinkedIn](www.linkedin.com/in/abukiks-x) • [GitHub](https://github.com/abukiks)
 
 ---
 
