@@ -31,7 +31,7 @@ jobs:
       - name: ✅ Lint with flake8
         run: |
           pip install flake8
-          flake8 app --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 src --count --select=E9,F63,F7,F82 --show-source --statistics
 
       - name: 🧪 Run Tests
         run: |
@@ -48,7 +48,19 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: 🐳 Push to Docker Hub
+      - name: 🐳 Push Docker image
         run: |
-          docker tag tasktrackr ${{ secrets.DOCKER_USERNAME }}/tasktrackr:${{ github.ref_name }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/tasktrackr:${{ github.ref_name }}
+          if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+            echo "Pushing image as 'latest'"
+            docker tag tasktrackr ${{ secrets.DOCKER_USERNAME }}/tasktrackr:latest
+            docker push ${{ secrets.DOCKER_USERNAME }}/tasktrackr:latest
+
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            TAG=${GITHUB_REF#refs/tags/}
+            echo "Pushing image as '${TAG}'"
+            docker tag tasktrackr ${{ secrets.DOCKER_USERNAME }}/tasktrackr:$TAG
+            docker push ${{ secrets.DOCKER_USERNAME }}/tasktrackr:$TAG
+
+          else
+            echo "Not master or tag — skipping Docker push."
+          fi
